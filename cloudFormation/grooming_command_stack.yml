@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "My API Gateway and Lambda function"
+
+# Resources in the stack that need to be created by AWS
+Resources:
+  GroomingAddAppointmentApi:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: GroomingAppointmentAdd
+
+  # Refer to API gateway
+  GroomingAddAppointmentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "POST"
+      Integration:
+        IntegrationHttpMethod: "POST"
+        Type: "AWS_PROXY"
+        Uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations" # Set method invocate path.
+          - lambdaArn: !GetAtt "GroomingAddAppointmentLambda.Arn"
+      ResourceId: !GetAtt "GroomingAddAppointmentApi.RootResourceId"
+      RestApiId: !Ref "GroomingAddAppointmentApi"
+
+  GroomingAddAppointmentApiDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn: "GroomingAddAppointmentApiMethod"
+    Properties:
+      RestApiId: !Ref "GroomingAddAppointmentApi"
+      StageName: test
+
+  GroomingAddAppointmentLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        ZipFile: |
+          def handler(event,context):
+            return {
+              'body': 'Hello, world!',
+              'headers': {
+                'Content-Type': 'text/plain'
+              },
+              'statusCode': 200
+            }
+      Handler: "index.handler"
+      Role: !GetAtt "GroomingAddAppointmentLambdaRole.Arn"
+      Runtime: python3.7
+      Tags: 
+        - Key: "project"
+          Value: "grooming"
+        - Key: "project-tpye"
+          Value: "event-driven"
+        - Key: "function-type"
+          Value: "lambda"
+        - Key: "description"
+          Value: "Create appointment for grooming"
+
+  LambdaApiGatewayInvoke:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt "GroomingAddAppointmentLambda.Arn"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${GroomingAddAppointmentApi}/*/GET/"
+
+  GroomingAddAppointmentLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: ["sts:AssumeRole"]
+            Effect: "Allow"
+            Principal:
+              Service: ["lambda.amazonaws.com"]
+      Policies:
+        # policy cloudWatch log
+        - PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action: ["cloudwatch:*", "logs:*"]
+                Effect: "Allow"
+                Resource: "*"
+          PolicyName: "groomingLambdaLogPolicy"
+        # policy for eventBridge
+        - PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action: ["events:PutEvents"]
+                Effect: "Allow"
+                Resource: "*"
+          PolicyName: "groomingLambdaEventPolicy"
+
+  GroomingAppointmentLambdaLogGroup:
+    DependsOn: 
+      - GroomingAddAppointmentLambda
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GroomingAddAppointmentLambda}"
+
+  GroomingAppointmentEventBus: 
+    Type: AWS::Events::EventBus
+    Properties: 
+        Name: "GroomingAppointmentEventBus"
