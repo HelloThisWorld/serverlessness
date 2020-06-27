@@ -29,4 +29,4 @@ This project will use a [Event-driven_architecture](https://en.wikipedia.org/wik
 
 
 
-Hope you have a fun with this.
+Hope you have a fun with this project.
