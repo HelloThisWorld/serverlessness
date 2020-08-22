@@ -62,7 +62,8 @@ Resources:
       Action: "lambda:InvokeFunction"
       FunctionName: !GetAtt "GroomingAddAppointmentLambda.Arn"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${GroomingAddAppointmentApi}/*/GET/"
+      # API pattarn
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${GroomingAddAppointmentApi}/*/"
 
   GroomingAddAppointmentLambdaRole:
     Type: "AWS::IAM::Role"
@@ -91,6 +92,23 @@ Resources:
                 Effect: "Allow"
                 Resource: "*"
           PolicyName: "groomingLambdaEventPolicy"
+
+  GroomingLambdaVersion:
+    Type: AWS::Lambda::Version
+    Properties: 
+      FunctionName: !Ref GroomingAddAppointmentLambda
+
+  GroomingLambdaAsyncconfig:
+    Type: AWS::Lambda::EventInvokeConfig
+    Properties:
+      DestinationConfig:
+          OnFailure:
+            Destination: !GetAtt "GroomingAppointmentEventBus.Arn"
+          OnSuccess:
+            Destination: !GetAtt "GroomingAppointmentEventBus.Arn"
+      FunctionName: !Ref GroomingAddAppointmentLambda
+      MaximumEventAgeInSeconds: 300
+      Qualifier: !GetAtt GroomingLambdaVersion.Version
 
   GroomingAppointmentLambdaLogGroup:
     DependsOn: 
