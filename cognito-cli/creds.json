@@ -1,0 +1,9 @@
+{   
+    "UserPoolId": "ap-northeast-1_mDWE4uhHj",
+    "ClientId": "2c1nstn5p5djgtg3o4a64ro0sd",
+    "AuthFlow": "ADMIN_USER_PASSWORD_AUTH",
+    "AuthParameters": {
+        "USERNAME": "tracy1",
+        "PASSWORD": "password"
+    }
+}
