@@ -24,7 +24,7 @@ Resources:
             Bucket:
               Ref: MyBucket
             Events: s3:ObjectCreated:*
-      CodeUri: s3://tracy-sam/9c7d8d5c39396d259ffe4185a138ac0b
+      CodeUri: s3://tracy-sam/cbf56bbcb19d0c557bbd5c863bf65c31
   MyBucket:
     Type: AWS::S3::Bucket
   addNumbers:
@@ -37,4 +37,4 @@ Resources:
           Properties:
             Method: post
             Path: /add
-      CodeUri: s3://tracy-sam/9c7d8d5c39396d259ffe4185a138ac0b
+      CodeUri: s3://tracy-sam/cbf56bbcb19d0c557bbd5c863bf65c31
