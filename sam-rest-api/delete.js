@@ -7,8 +7,8 @@ const tableName = process.env.TABLE_NAME;
 
 exports.handler = async (event) => {
     let userid = event.pathParameters.userid;
-    let data = dynamodb.delete({
-        tableName: tableName,
+    let data = await dynamodb.delete({
+        TableName: tableName,
         Key: {
             userid: userid
         }

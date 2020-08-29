@@ -7,7 +7,7 @@ const tableName = process.env.TABLE_NAME;
 
 exports.handler = async (event) => {
     let userid = event.pathParameters.userid;
-    let data = dynamodb.get({
+    let data = await dynamodb.get({
         TableName: tableName,
         Key: {
             userid: userid
@@ -20,7 +20,12 @@ exports.handler = async (event) => {
             body: JSON.stringify(data.Item)
         };
     } else {
-        throw new Error("User not found");
+        return {
+            statusCode: 404,
+            body: JSON.stringify({
+                message: "User not found"
+            })
+        };
     }
 
 };
