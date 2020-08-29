@@ -2,3 +2,4 @@ greetMe/node_modules/
 sandbox/node_modules/
 *.zip
 resizeImage/node_modules/
+sam-rest-api/node_modules/
