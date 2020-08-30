@@ -3,3 +3,4 @@ sandbox/node_modules/
 *.zip
 resizeImage/node_modules/
 sam-rest-api/node_modules/
+serverless/node_modules/

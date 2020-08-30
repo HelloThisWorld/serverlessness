@@ -16,3 +16,15 @@ Deploy and remove
 $ sls deploy --stage <STAGE_NAME> [-f <FUNCTION_NAME>]
 $ sls remove
 ```
+
+Run offline serverless stack
+
+```
+$ sls offline
+```
+
+CloudWatch logging
+
+```
+$ sls logs -f add -s <STAGE_NAME> [--startTime 5m]|[--tail]
+```
