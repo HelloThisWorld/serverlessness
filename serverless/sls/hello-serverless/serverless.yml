@@ -13,6 +13,13 @@ functions:
     handler: handler.hello
     memorySize: 128
     timeout: 3
+    vpc:
+      securityGroupIds:
+        - sg-60a11a29
+      subnetIds:
+        - subnet-548c5c1c
+        - subnet-99875cb2
+        - subnet-d5b9ba8e
   
   add:
     handler: add.add
